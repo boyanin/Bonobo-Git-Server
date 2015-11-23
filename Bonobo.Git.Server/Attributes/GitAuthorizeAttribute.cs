@@ -39,9 +39,21 @@ namespace Bonobo.Git.Server
             string username = value.Substring(0, value.IndexOf(':'));
             string password = value.Substring(value.IndexOf(':') + 1);
 
+            // Automatically add domain name as prefix
+            if (!String.IsNullOrEmpty(username))
+            {
+                string domain = System.Configuration.ConfigurationManager.AppSettings["PrefixAllUsersWithDomain"];
+                if (!String.IsNullOrEmpty(domain))
+                {
+                    username = domain + "\\" + Bonobo.Git.Server.Helpers.MembershipHelper.RemoveDomainFromUsername(username);
+                    System.Diagnostics.Trace.TraceInformation("Added the domain, so the user becomes '{0}'", username);
+                }
+            }
+
             if (!String.IsNullOrEmpty(username) && !String.IsNullOrEmpty(password) &&
                 MembershipService.ValidateUser(username, password))
             {
+                System.Diagnostics.Trace.TraceInformation("User '{0}' logged in for URL '{1}'", username, filterContext.HttpContext.Request.Url);
                 filterContext.HttpContext.User = new GenericPrincipal(new GenericIdentity(username), null);
             }
             else
@@ -49,7 +61,6 @@ namespace Bonobo.Git.Server
                 filterContext.Result = new HttpStatusCodeResult(401);
             }
         }
-
 
         private static bool IsWindowsUserAuthenticated(ControllerContext context)
         {

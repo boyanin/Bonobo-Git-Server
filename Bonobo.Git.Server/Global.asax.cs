@@ -145,7 +145,7 @@ namespace Bonobo.Git.Server
             if (membershipServiceType != null)
             {
                 container.RegisterType(typeof(IMembershipService), membershipServiceType);
-                Trace.TraceInformation("Membership service registered with '{0}'", membershipServiceType.Name);
+                Trace.TraceInformation("Membership service registered with '{0}'", membershipServiceType.FullName);
             }
             else
             {

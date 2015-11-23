@@ -11,6 +11,17 @@ namespace Bonobo.Git.Server.Helpers
 {
     public class MembershipHelper
     {
+        public static string RemoveDomainFromUsername(string username)
+        {
+            if (username == null)
+                throw new ArgumentNullException("username");
+
+            int index = username.IndexOf('\\');
+            return index >= 0 ?
+                username.Substring(index + 1) :
+                username;
+        }
+
         public static string GetBaseUrl()
         {
             var request = HttpContext.Current.Request;
@@ -47,7 +58,7 @@ namespace Bonobo.Git.Server.Helpers
 
                 smtpClient.Send(email);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 result = false;
             }
