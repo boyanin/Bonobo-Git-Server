@@ -1,6 +1,8 @@
 Bonobo Git Server
 ==============================================
 
+I needed support for other IMembershipService implementations for version 4.0.0, so I use this fork to allow this.
+
 Thank you for downloading Bonobo Git Server. For more information please visit [http://bonobogitserver.com](http://bonobogitserver.com).
 
 
