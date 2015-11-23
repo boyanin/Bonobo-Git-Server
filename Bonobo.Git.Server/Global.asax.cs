@@ -128,7 +128,30 @@ namespace Bonobo.Git.Server
         {
             var container = new UnityContainer().AddExtension(new UnityDecoratorContainerExtension());
 
-            container.RegisterType<IMembershipService, EFMembershipService>();
+            Type membershipServiceType = null;
+            string membershipServiceTypeName = ConfigurationManager.AppSettings["MembershipService"];
+            if (membershipServiceTypeName != null)
+            {
+                try
+                {
+                    membershipServiceType = Type.GetType(membershipServiceTypeName);
+                }
+                catch
+                {
+                    Trace.TraceError("Cannot find the membership service type '{0}'", membershipServiceTypeName);
+                }
+            }
+
+            if (membershipServiceType != null)
+            {
+                container.RegisterType(typeof(IMembershipService), membershipServiceType);
+                Trace.TraceInformation("Membership service registered with '{0}'", membershipServiceType.Name);
+            }
+            else
+            {
+                container.RegisterType<IMembershipService, EFMembershipService>();
+            }
+
             container.RegisterType<IRepositoryPermissionService, EFRepositoryPermissionService>();
             container.RegisterType<IFormsAuthenticationService, FormsAuthenticationService>();
             container.RegisterType<ITeamRepository, EFTeamRepository>();
